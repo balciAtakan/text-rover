@@ -78,7 +78,7 @@ cd text-rover
 docker-compose up -d
 
 # Access the application
-open http://localhost:4200
+open http://localhost:80
 ```
 
 ### Option 2: Manual Setup
@@ -139,45 +139,6 @@ npm start
    - Clear local history vs. delete database history
    - Persistent storage across sessions
 
-## 🧪 Testing
-
-### Frontend Tests (34 tests)
-```bash
-cd frontend
-
-# Run tests
-npm test
-
-# Run tests with coverage
-npm test -- --code-coverage
-
-# Coverage results in coverage/text-rover/
-```
-
-**Coverage Results:**
-- Statements: 49.36% (78/158)
-- Branches: 76.92% (30/39)
-- Functions: 31.57% (12/38)
-- Lines: 50.33% (76/151)
-
-### Backend Tests
-```bash
-cd backend
-
-# Run all tests
-mvn test
-
-# Run with coverage
-mvn test jacoco:report
-```
-
-### Test Categories
-- **Unit Tests**: Service and component logic
-- **Integration Tests**: API endpoints and database operations
-- **Performance Tests**: Large dataset processing
-- **Accessibility Tests**: ARIA labels and keyboard navigation
-- **Edge Case Tests**: Empty inputs, special characters, validation
-
 ## 🔧 Development
 
 ### Code Generation
@@ -191,35 +152,6 @@ npm run generate-api
 # Backend DTOs are auto-generated during Maven build
 cd backend
 mvn clean compile
-```
-
-### Key Files Explained
-
-**`test.ts`**: Angular test configuration file that:
-- Initializes the Angular testing environment
-- Imports all test specification files
-- Configures Jasmine and Karma test runners
-- Replaces webpack context for better compatibility
-
-**`frontend.iml`** (removed): IntelliJ IDEA module file - not needed for the project
-
-### Database Schema
-```sql
--- Analysis results table
-CREATE TABLE analysis_results (
-    id BIGSERIAL PRIMARY KEY,
-    type VARCHAR(20) NOT NULL,
-    text TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Character counts table
-CREATE TABLE analysis_character_counts (
-    id BIGSERIAL PRIMARY KEY,
-    analysis_result_id BIGINT REFERENCES analysis_results(id),
-    character VARCHAR(1) NOT NULL,
-    count INTEGER NOT NULL
-);
 ```
 
 ## 🌐 API Reference
@@ -255,17 +187,6 @@ CREATE TABLE analysis_character_counts (
 - **Backend**: Spring Boot application (port 8080)
 - **Database**: PostgreSQL 15 (port 5432)
 
-### Environment Variables
-```env
-# Database
-POSTGRES_DB=textrover
-POSTGRES_USER=textrover
-POSTGRES_PASSWORD=password
-
-# Backend
-SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/textrover
-```
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -287,7 +208,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [ ] Advanced text statistics (readability scores, etc.)
 - [ ] Multi-language support with i18n
 - [ ] Dark/light theme toggle
-- [ ] Text analysis API rate limiting
 - [ ] Batch file processing
 - [ ] Analysis result sharing via URLs
 
