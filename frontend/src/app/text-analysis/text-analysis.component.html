@@ -1,0 +1,256 @@
+<div class="container">
+    <!-- Mode Toggle -->
+    <mat-card class="mode-card">
+        <mat-card-content>
+            <div class="mode-toggle">
+                <mat-slide-toggle
+                        [(ngModel)]="isOnlineMode"
+                        color="primary">
+          <span class="toggle-label" [class.online]="isOnlineMode" [class.offline]="!isOnlineMode">
+            <mat-icon>{{ isOnlineMode ? 'cloud' : 'offline_bolt' }}</mat-icon>
+              {{ isOnlineMode ? 'Online (REST API)' : 'Offline (Local)' }}
+          </span>
+                </mat-slide-toggle>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Input Form -->
+    <mat-card class="input-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>text_fields</mat-icon>
+                TextRover - Text Analysis Tool
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="form-container">
+                <mat-form-field class="analysis-type-field">
+                    <mat-label>Analysis Type</mat-label>
+                    <mat-select [(ngModel)]="analysisType">
+                        <mat-option value="vowels">Vowels</mat-option>
+                        <mat-option value="consonants">Consonants</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="text-input-field">
+                    <mat-label>Enter text to analyze</mat-label>
+                    <textarea
+                            matInput
+                            [(ngModel)]="inputText"
+                            [maxlength]="maxTextLength"
+                            rows="6"
+                            placeholder="Type or paste your text here...">
+                    </textarea>
+                    <mat-hint align="end">
+                        <span [style.color]="getCharacterCountColor() === 'warn' ? '#f44336' :
+                                           getCharacterCountColor() === 'accent' ? '#ff9800' : '#2196f3'">
+                          {{ getRemainingCharacters() }} characters remaining
+                        </span>
+                    </mat-hint>
+                </mat-form-field>
+
+                <div class="action-buttons">
+                    <button
+                            mat-raised-button
+                            color="primary"
+                            (click)="analyzeText()"
+                            [disabled]="isLoading || !inputText.trim()">
+                        <mat-icon>analytics</mat-icon>
+                        {{ isLoading ? 'Analyzing...' : 'Analyze Text' }}
+                    </button>
+
+                    <mat-spinner
+                            *ngIf="isLoading"
+                            diameter="24"
+                            class="loading-spinner">
+                    </mat-spinner>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Analysis History -->
+    <mat-card *ngIf="analysisHistory.length > 0" class="history-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>history</mat-icon>
+                Analysis History
+            </mat-card-title>
+            <div class="spacer"></div>
+            <div class="history-actions">
+                <button
+                        mat-stroked-button
+                        color="warn"
+                        (click)="deleteAllHistory()"
+                        [disabled]="isDeletingHistory"
+                        matTooltip="Delete all history from database">
+                    <mat-icon>delete_forever</mat-icon>
+                    {{ isDeletingHistory ? 'Deleting...' : 'Delete All' }}
+                </button>
+                <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="clearLocalHistory()"
+                        matTooltip="Clear local history">
+                    <mat-icon>clear_all</mat-icon>
+                </button>
+            </div>
+        </mat-card-header>
+
+        <mat-card-content>
+            <mat-accordion multi="true">
+                <mat-expansion-panel
+                        *ngFor="let result of analysisHistory; let i = index"
+                        [expanded]="i === 0"
+                        class="history-panel">
+
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <div class="panel-title">
+                                <mat-chip-set>
+                                    <mat-chip [class]="result.mode === 'online' ? 'online-chip' : 'offline-chip'">
+                                        <mat-icon>{{ result.mode === 'online' ? 'cloud' : 'offline_bolt' }}</mat-icon>
+                                        {{ result.mode?.toUpperCase() }}
+                                    </mat-chip>
+                                    <mat-chip class="analysis-chip">
+                                        {{ result.type.toUpperCase() }}
+                                    </mat-chip>
+                                </mat-chip-set>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <div class="panel-description">
+                            <span class="timestamp">
+                              {{ result.timestamp | date:'medium' }}
+                            </span>
+                                <span class="preview">
+                              {{ result.text.substring(0, 50) }}{{ result.text.length > 50 ? '...' : '' }}
+                            </span>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div class="panel-content">
+                        <!-- Original Text -->
+                        <div class="section" [class.online]="result.mode === 'online'" [class.offline]="result.mode === 'offline'">
+                            <h4>
+                                <mat-icon>text_snippet</mat-icon>
+                                Original Text
+                            </h4>
+                            <div class="text-content" [class.online]="result.mode === 'online'" [class.offline]="result.mode === 'offline'">{{ result.text }}</div>
+                        </div>
+
+                        <!-- Analysis Results -->
+                        <div class="section" [class.online]="result.mode === 'online'" [class.offline]="result.mode === 'offline'">
+                            <h4>
+                                <mat-icon>analytics</mat-icon>
+                                {{ result.type.charAt(0).toUpperCase() + result.type.slice(1) }} Analysis
+                            </h4>
+                            <div class="analysis-results">
+                                <div class="{{result.mode === 'online' ? 'result-summary-online': 'result-summary-offline'}}">
+                                    {{ getHumanReadableOutput(result) }}
+                                </div>
+
+                                <div *ngIf="getResultEntries(result.result).length > 0" class="character-breakdown">
+                                    <mat-chip-set>
+                                        <mat-chip
+                                                *ngFor="let entry of getResultEntries(result.result)"
+                                                color="primary">
+                                            {{ entry.key }}: {{ entry.value }}
+                                        </mat-chip>
+                                    </mat-chip-set>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div *ngIf="result.statistics" class="section">
+                            <mat-expansion-panel hideToggle>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h4>
+                                            <mat-icon>bar_chart</mat-icon>
+                                            Statistics
+                                        </h4>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="statistics-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Letters:</span>
+                                        <span class="stat-value">{{ result.statistics.totalLetters }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Vowels:</span>
+                                        <span class="stat-value">{{ result.statistics.totalVowels }}
+                                            ({{ result.statistics.vowelPercentage }}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Consonants:</span>
+                                        <span class="stat-value">{{ result.statistics.totalConsonants }}
+                                            ({{ result.statistics.consonantPercentage }}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Digits:</span>
+                                        <span class="stat-value">{{ result.statistics.totalDigits }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Symbols:</span>
+                                        <span class="stat-value">{{ result.statistics.totalSymbols }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Word Count:</span>
+                                        <span class="stat-value">{{ result.statistics.wordCount }}</span>
+                                    </div>
+                                    <div class="stat-item" *ngIf="result.statistics.mostFrequentCharacter">
+                                        <span class="stat-label">Most Frequent:</span>
+                                        <span class="stat-value">'{{ result.statistics.mostFrequentCharacter }}
+                                            ' ({{ result.statistics.mostFrequentCount }}x)</span>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="section">
+                            <div class="action-buttons">
+                                <button
+                                        mat-stroked-button
+                                        color="primary"
+                                        (click)="copyToClipboard(getStatisticsText(result))"
+                                        matTooltip="Copy full analysis to clipboard">
+                                    <mat-icon>content_copy</mat-icon>
+                                    Copy Analysis
+                                </button>
+
+                                <button
+                                        mat-stroked-button
+                                        color="accent"
+                                        (click)="copyToClipboard(result.text)"
+                                        matTooltip="Copy original text to clipboard">
+                                    <mat-icon>content_copy</mat-icon>
+                                    Copy Text
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            
+            <!-- Load More Button -->
+            <div *ngIf="hasMoreHistory" class="load-more-section">
+                <button
+                        mat-stroked-button
+                        color="primary"
+                        (click)="loadMoreHistory()"
+                        [disabled]="isLoadingHistory"
+                        class="load-more-button">
+                    <mat-icon>expand_more</mat-icon>
+                    {{ isLoadingHistory ? 'Loading...' : 'Load More' }}
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

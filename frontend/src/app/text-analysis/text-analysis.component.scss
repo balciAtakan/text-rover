@@ -1,0 +1,311 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mode-card {
+  margin-bottom: 20px;
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.toggle-label.online {
+  color: var(--dark-green);
+}
+
+.toggle-label.offline {
+  color: var(--dark-blue);
+}
+
+.input-card {
+  margin-bottom: 20px;
+}
+
+.input-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.analysis-type-field {
+  width: 200px;
+}
+
+.text-input-field {
+  width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading-spinner {
+  margin-left: 16px;
+}
+
+.history-card {
+  margin-bottom: 20px;
+}
+
+.history-card mat-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.history-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.history-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.load-more-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.load-more-button {
+  min-width: 120px;
+}
+
+.history-panel {
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.preview {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
+  font-style: italic;
+}
+
+.panel-content {
+  padding: 16px 0;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.section.online h4 {
+  color: var(--dark-green);
+}
+
+.section.offline h4 {
+  color: var(--dark-blue);
+}
+
+.text-content {
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Roboto Mono', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.text-content.online {
+  background-color: var(--light-green);
+  border-left: 4px solid var(--dark-green);
+}
+
+.text-content.offline {
+  background-color: var(--light-blue);
+  border-left: 4px solid var(--dark-blue);
+}
+
+.analysis-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-summary-offline {
+  background-color: var(--light-blue);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid var(--dark-blue);
+  font-weight: 500;
+}
+
+.result-summary-online {
+  background-color: var(--light-green);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid var(--dark-green);
+  font-weight: 500;
+}
+
+.character-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.stat-label {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.stat-value {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+mat-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+mat-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .analysis-type-field {
+    width: 100%;
+  }
+  
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .panel-description {
+    align-items: flex-start;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+}
+
+/* Custom chip colors - using  to override Material styles */
+.mat-mdc-chip.online-chip {
+  background-color: var(--dark-green) !important;
+  color: white !important;
+}
+
+.mat-mdc-chip.offline-chip {
+  background-color: var(--dark-blue) !important;
+  color: white !important;
+}
+
+.mat-mdc-chip.analysis-chip {
+  background-color: var(--light-blue) !important;
+  color: white !important;
+}
+
+
+.toggle-label.offline {
+  color: var(--dark-blue) !important;
+}
+
+/* Material Design Enhancements */
+.mat-mdc-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.mat-mdc-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.mat-expansion-panel {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mat-expansion-panel.mat-expanded {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

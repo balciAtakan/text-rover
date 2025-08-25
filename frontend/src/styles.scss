@@ -1,0 +1,29 @@
+/* Global styles for Angular Material */
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Color variables */
+:root {
+  --light-blue: #e3f2fd;
+  --dark-blue: #1976d2;
+  --light-green: #d5e5d3;
+  --dark-green: #4ad219;
+}
+
+/* Custom snackbar styling */
+.error-snackbar .mat-mdc-snack-bar-container {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.error-snackbar .mat-mdc-snack-bar-action {
+  color: white !important;
+}

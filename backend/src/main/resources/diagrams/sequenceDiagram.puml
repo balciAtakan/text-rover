@@ -1,0 +1,46 @@
+@startuml
+actor User
+participant AngularFrontend as "Angular Frontend"
+participant TSAnalyzer as "TypeScript Analyzer"
+participant RESTAPI as "Spring Boot REST API"
+participant JavaAnalyzer as "Java TextAnalyzer Service"
+participant HistoryService as "History Service"
+database PostgreSQL as "Postgres DB"
+== History Retrieval ==
+User -> AngularFrontend: Request history (paginated)
+AngularFrontend -> RESTAPI: GET /api/history?page=...
+RESTAPI -> HistoryService: getHistory()
+HistoryService -> PostgreSQL: SELECT with LIMIT/OFFSET
+PostgreSQL --> HistoryService: results
+HistoryService --> RESTAPI: paginated results
+RESTAPI --> AngularFrontend: JSON list
+AngularFrontend -> User: Display history list
+
+== Text Analysis Flow ==
+User -> AngularFrontend: Enter text + press Analyze
+
+alt Offline Mode
+  AngularFrontend -> TSAnalyzer: analyze(type, sentence)
+  TSAnalyzer --> AngularFrontend: result + stats
+  AngularFrontend -> User: Display result in history panel
+else Online Mode
+  AngularFrontend -> RESTAPI: POST /api/analyze {type, sentence}
+  RESTAPI -> JavaAnalyzer: analyze(type, sentence)
+  JavaAnalyzer --> RESTAPI: result + stats
+  RESTAPI -> HistoryService: saveAnalysis(result)
+  HistoryService -> PostgreSQL: insert record
+  RESTAPI --> AngularFrontend: JSON result
+  AngularFrontend -> User: Display result in history panel
+end
+
+
+
+== Delete History ==
+User -> AngularFrontend: Delete all history
+AngularFrontend -> RESTAPI: DELETE /api/history
+RESTAPI -> HistoryService: deleteAll()
+HistoryService -> PostgreSQL: TRUNCATE/DELETE
+HistoryService --> RESTAPI: success
+RESTAPI --> AngularFrontend: confirmation
+AngularFrontend -> User: Show "History cleared"
+@enduml

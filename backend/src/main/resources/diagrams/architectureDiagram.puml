@@ -1,0 +1,21 @@
+@startuml
+node "Angular Frontend" {
+  component "UI Components\n- Input Box\n- Toggle Online/Offline\n- Results List (History Panel)\n- Copy to Clipboard\n- Angular Material" as UI
+  component "TextAnalyzer.ts\n(Offline logic)" as TSAnalyzer
+}
+
+node "Spring Boot Backend" {
+  component "REST Controller\n/api/analyze\n/api/history\n/api/history/delete" as REST
+  component "TextAnalyzerService\n(Java logic)" as JavaAnalyzer
+  component "HistoryService\n(Pagination, Delete)" as HistoryService
+  component "Rate Limiter" as Infra
+}
+
+database "PostgreSQL\n+ Hibernate + Liquibase" as DB
+
+UI -down-> TSAnalyzer : Offline Mode
+UI -down-> REST : Online Mode
+REST -down-> JavaAnalyzer : analyze()
+REST -down-> HistoryService : getHistory(), deleteHistory()
+HistoryService -down-> DB
+@enduml

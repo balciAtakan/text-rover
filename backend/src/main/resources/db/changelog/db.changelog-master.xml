@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="1" author="textrover">
+        <comment>Create analysis_results table</comment>
+        <createTable tableName="analysis_results" schemaName="textrover">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="input_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="analysis_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mode" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_letters" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_vowels" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_consonants" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_digits" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_symbols" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="word_count" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vowel_percentage" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consonant_percentage" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="most_frequent_character" type="VARCHAR(1)"/>
+            <column name="most_frequent_count" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="textrover">
+        <comment>Create analysis_character_counts table</comment>
+        <createTable tableName="analysis_character_counts" schemaName="textrover">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="analysis_result_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="character" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="count" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="textrover">
+        <comment>Add foreign key constraint for character counts</comment>
+        <addForeignKeyConstraint
+                baseTableName="analysis_character_counts"
+                baseTableSchemaName="textrover"
+                baseColumnNames="analysis_result_id"
+                constraintName="fk_character_counts_analysis_result"
+                referencedTableName="analysis_results"
+                referencedTableSchemaName="textrover"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="4" author="textrover">
+        <comment>Create indexes for performance</comment>
+        <createIndex indexName="idx_analysis_results_created_at" tableName="analysis_results" schemaName="textrover">
+            <column name="created_at" descending="true"/>
+        </createIndex>
+        <createIndex indexName="idx_analysis_results_type" tableName="analysis_results" schemaName="textrover">
+            <column name="analysis_type"/>
+        </createIndex>
+        <createIndex indexName="idx_analysis_results_mode" tableName="analysis_results" schemaName="textrover">
+            <column name="mode"/>
+        </createIndex>
+        <createIndex indexName="idx_character_counts_analysis_result_id" tableName="analysis_character_counts" schemaName="textrover">
+            <column name="analysis_result_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
